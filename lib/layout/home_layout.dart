@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:todo_list_app/modules/archived_tasks/app-archieved-tasks.dart';
+import 'package:todo_list_app/modules/done_tasks/app-done-tasks.dart';
+import 'package:todo_list_app/modules/new_tasks/app-new-tasks.dart';
 
 class HomeLayout extends StatefulWidget {
   const HomeLayout({super.key});
@@ -9,6 +12,12 @@ class HomeLayout extends StatefulWidget {
 
 class _HomeLayoutState extends State<HomeLayout> {
   int currentIndex = 0;
+  List<Widget> screens = [
+    NewTaskScreen(),
+    DoneTaskScreen(),
+    ArchieveTaskScreen()
+  ];
+  List<String> appBarNames = ["New Task", "Done Task", "Archive Task"];
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +38,10 @@ class _HomeLayoutState extends State<HomeLayout> {
         ],
       ),
       appBar: AppBar(
-        title: Text("TODO App"),
+        title: Text("${appBarNames[currentIndex]}"),
         centerTitle: true,
       ),
+      body: screens[currentIndex],
     );
   }
 }

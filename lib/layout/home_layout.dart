@@ -23,7 +23,10 @@ class _HomeLayoutState extends State<HomeLayout> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () async {
+          var name = await getName();
+          print(name);
+        },
         child: Icon(Icons.add),
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -47,5 +50,9 @@ class _HomeLayoutState extends State<HomeLayout> {
       ),
       body: screens[currentIndex],
     );
+  }
+
+  Future<String> getName() async {
+    return "Mohamed Ahmed";
   }
 }

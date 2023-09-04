@@ -12,7 +12,7 @@ class HomeLayout extends StatefulWidget {
 
 class _HomeLayoutState extends State<HomeLayout> {
   int currentIndex = 0;
-  List<Widget> screens = [
+  List<Widget> screens = const [
     NewTaskScreen(),
     DoneTaskScreen(),
     ArchieveTaskScreen()
@@ -37,7 +37,7 @@ class _HomeLayoutState extends State<HomeLayout> {
             currentIndex = index;
           });
         },
-        items: [
+        items: const [
           BottomNavigationBarItem(icon: Icon(Icons.menu), label: "Tasks"),
           BottomNavigationBarItem(
               icon: Icon(Icons.check_circle_outline), label: "Done"),
@@ -45,7 +45,7 @@ class _HomeLayoutState extends State<HomeLayout> {
         ],
       ),
       appBar: AppBar(
-        title: Text("${appBarNames[currentIndex]}"),
+        title: Text(appBarNames[currentIndex]),
         centerTitle: true,
       ),
       body: screens[currentIndex],

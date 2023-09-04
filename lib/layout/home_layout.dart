@@ -22,6 +22,7 @@ class _HomeLayoutState extends State<HomeLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           var name = await getName();
@@ -30,6 +31,7 @@ class _HomeLayoutState extends State<HomeLayout> {
         child: Icon(Icons.add),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.black,
         type: BottomNavigationBarType.fixed,
         currentIndex: currentIndex,
         onTap: (int index) {
@@ -45,6 +47,7 @@ class _HomeLayoutState extends State<HomeLayout> {
         ],
       ),
       appBar: AppBar(
+        backgroundColor: Colors.black,
         title: Text(appBarNames[currentIndex]),
         centerTitle: true,
       ),

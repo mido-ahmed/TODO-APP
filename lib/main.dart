@@ -13,12 +13,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'BMI Calculator App',
+      title: 'TODO App',
       theme: ThemeData.dark().copyWith(
           // primaryColor: const Color(0xFF3D4149),
           // scaffoldBackgroundColor: const Color(0xFF3D4149),
           ),
-      home: SafeArea(
+      home: const SafeArea(
         child: HomeLayout(),
       ),
     );

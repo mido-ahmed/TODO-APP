@@ -24,9 +24,12 @@ class _HomeLayoutState extends State<HomeLayout> {
     return Scaffold(
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          var name = await getName();
-          print(name);
+        onPressed: () {
+          getName().then((value) {
+            print(value);
+          }).catchError((error) {
+            print("Error is ${error.toString()}");
+          });
         },
         child: Icon(Icons.add),
       ),

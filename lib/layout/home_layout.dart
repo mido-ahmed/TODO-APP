@@ -5,6 +5,8 @@ import 'package:todo_list_app/modules/new_tasks/app-new-tasks.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:intl/intl.dart';
 
+import '../constatnt/widgets/InsertDataWidget.dart';
+
 class HomeLayout extends StatefulWidget {
   const HomeLayout({super.key});
 
@@ -61,25 +63,20 @@ class _HomeLayoutState extends State<HomeLayout> {
                   child: Form(
                       key: formKey,
                       child: Column(mainAxisSize: MainAxisSize.min, children: [
-                        TextFormField(
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      width: 2, color: Colors.black)),
-                              label: Text("Task Title",
-                                  style: TextStyle(color: Colors.black)),
-                              prefixIcon:
-                                  Icon(Icons.title, color: Colors.black),
-                            ),
-                            controller: titleController,
+                        InsertDataWidget(
                             keyboardType: TextInputType.text,
+                            controller: titleController,
+                            iconData: Icons.title,
+                            borderColor: Colors.black,
+                            borderWidth: 3,
+                            hintText: "Task Time",
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return "title must not be empty";
+                              } else {
+                                return null;
                               }
-                              return null;
                             }),
-                        const SizedBox(height: 15.0),
                         TextFormField(
                             decoration: const InputDecoration(
                                 border: OutlineInputBorder(

@@ -6,6 +6,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:intl/intl.dart';
 
 import '../constatnt/widgets/InsertDataWidget.dart';
+import '../constatnt/widgets/constatnts.dart';
 
 class HomeLayout extends StatefulWidget {
   const HomeLayout({super.key});
@@ -45,13 +46,19 @@ class _HomeLayoutState extends State<HomeLayout> {
         onPressed: () {
           if (isBottomSheetShown) {
             if (formKey.currentState!.validate()) {
-              insertToDataBase(titleController.text, timeController.text,
-                      dateController.text)
-                  .then((value) {
-                Navigator.pop(context);
-                isBottomSheetShown = false;
-                setState(() {
-                  fabIcon = Icons.edit;
+              insertToDataBase(
+                titleController.text,
+                timeController.text,
+                dateController.text,
+              ).then((value) {
+                getFromDataBase(database).then((value) {
+                  Navigator.pop(context);
+                  setState(() {
+                    isBottomSheetShown = false;
+                    fabIcon = Icons.edit;
+                    tasks = value!;
+                  });
+                  print(tasks);
                 });
               });
             }
@@ -170,50 +177,60 @@ class _HomeLayoutState extends State<HomeLayout> {
         ],
       ),
       appBar: AppBar(title: Text(appBarNames[currentIndex]), centerTitle: true),
-      body: screens[currentIndex],
+      body: tasks.length == 0
+          ? const Center(child: CircularProgressIndicator())
+          : screens[currentIndex],
     );
   }
-}
 
-Database? database;
+  Database? database;
 
-void createDataBase() async {
-  database = await openDatabase(
-    'todo.db',
-    version: 1,
-    onCreate: (database, version) async {
-      print("database craeted");
-      database
-          .execute(
-              'CREATE TABLE tasks(id INTEGER primary key,title TEXT,date TEXT,time TEXT ,status TEXT);')
+  void createDataBase() async {
+    database = await openDatabase(
+      'todo.db',
+      version: 1,
+      onCreate: (database, version) async {
+        print("database created");
+        database
+            .execute(
+                'CREATE TABLE tasks(id INTEGER primary key,title TEXT,date TEXT,time TEXT ,status TEXT);')
+            .then((value) {
+          print("table created");
+        }).catchError((error) {
+          print("Error when creating table ${error.toString()}");
+        });
+      },
+      onOpen: (database) {
+        getFromDataBase(database).then((value) {
+          setState(() {
+            tasks = value!;
+          });
+          print(tasks);
+        });
+        print("database opened");
+      },
+    );
+  }
+
+  Future insertToDataBase(
+    @required String title,
+    @required String date,
+    @required String time,
+  ) async {
+    return await database?.transaction((txn) async {
+      txn
+          .rawInsert(
+              'INSERT INTO tasks(title,date,time,status) VALUES ("$title","$date","$time","new")')
           .then((value) {
-        print("table created");
+        print("$value inserted successfully");
       }).catchError((error) {
-        print("Error when creating table ${error.toString()}");
+        print("Error when inserting new record ${error.toString()}");
       });
-    },
-    onOpen: (database) {
-      print("database opened");
-    },
-  );
-}
-
-Future insertToDataBase(
-  @required String title,
-  @required String time,
-  @required String date,
-) async {
-  return await database?.transaction((txn) async {
-    txn
-        .rawInsert(
-            'INSERT INTO tasks(title,date,time,status) VALUES ("$title","$time","$date","new")')
-        .then((value) {
-      print("$value inserted successfully");
-    }).catchError((error) {
-      print("Error when inserting new record ${error.toString()}");
+      return null;
     });
-    return null;
-  });
-}
+  }
 
-void getFromDataBase() {}
+  Future<List<Map<String, Object?>>?> getFromDataBase(database) async {
+    return await database?.rawQuery('SELECT * FROM tasks');
+  }
+}

@@ -56,85 +56,96 @@ class _HomeLayoutState extends State<HomeLayout> {
               });
             }
           } else {
-            scaffoldKey.currentState?.showBottomSheet(
-              (context) => Container(
-                  color: Colors.grey,
-                  padding: const EdgeInsets.all(20.0),
-                  child: Form(
-                      key: formKey,
-                      child: Column(mainAxisSize: MainAxisSize.min, children: [
-                        InsertDataWidget(
-                            keyboardType: TextInputType.text,
-                            controller: titleController,
-                            iconData: Icons.title,
-                            borderColor: Colors.black,
-                            borderWidth: 3,
-                            hintText: "Task Time",
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return "title must not be empty";
-                              } else {
-                                return null;
-                              }
-                            }),
-                        TextFormField(
-                            decoration: const InputDecoration(
-                                border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        width: 2, color: Colors.black)),
-                                label: Text("Task Time",
-                                    style: TextStyle(color: Colors.black)),
-                                prefixIcon: Icon(Icons.watch_later_outlined,
-                                    color: Colors.black)),
-                            controller: timeController,
-                            keyboardType: TextInputType.datetime,
-                            onTap: () {
-                              showTimePicker(
-                                      context: context,
-                                      initialTime: TimeOfDay.now())
-                                  .then((value) {
-                                timeController.text =
-                                    value!.format(context).toString();
-                              });
-                            },
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return "time must not be empty";
-                              }
-                              return null;
-                            }),
-                        const SizedBox(height: 15.0),
-                        TextFormField(
-                            decoration: const InputDecoration(
-                                border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        width: 2, color: Colors.black)),
-                                label: Text("Task Date",
-                                    style: TextStyle(color: Colors.black)),
-                                prefixIcon: Icon(Icons.calendar_month_outlined,
-                                    color: Colors.black)),
-                            controller: dateController,
-                            keyboardType: TextInputType.datetime,
-                            onTap: () {
-                              showDatePicker(
-                                      context: context,
-                                      initialDate: DateTime.now(),
-                                      firstDate: DateTime.now(),
-                                      lastDate: DateTime.parse("2030-12-30"))
-                                  .then((value) {
-                                dateController.text =
-                                    DateFormat.yMMMd().format(value!);
-                              });
-                            },
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return "date must not be empty";
-                              }
-                              return null;
-                            })
-                      ]))),
-              elevation: 20.0,
-            );
+            scaffoldKey.currentState
+                ?.showBottomSheet(
+                  (context) => Container(
+                      color: Colors.grey,
+                      padding: const EdgeInsets.all(20.0),
+                      child: Form(
+                          key: formKey,
+                          child:
+                              Column(mainAxisSize: MainAxisSize.min, children: [
+                            InsertDataWidget(
+                                keyboardType: TextInputType.text,
+                                controller: titleController,
+                                iconData: Icons.title,
+                                borderColor: Colors.black,
+                                borderWidth: 3,
+                                hintText: "Task Time",
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return "title must not be empty";
+                                  } else {
+                                    return null;
+                                  }
+                                }),
+                            TextFormField(
+                                decoration: const InputDecoration(
+                                    border: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            width: 2, color: Colors.black)),
+                                    label: Text("Task Time",
+                                        style: TextStyle(color: Colors.black)),
+                                    prefixIcon: Icon(Icons.watch_later_outlined,
+                                        color: Colors.black)),
+                                controller: timeController,
+                                keyboardType: TextInputType.datetime,
+                                onTap: () {
+                                  showTimePicker(
+                                          context: context,
+                                          initialTime: TimeOfDay.now())
+                                      .then((value) {
+                                    timeController.text =
+                                        value!.format(context).toString();
+                                  });
+                                },
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return "time must not be empty";
+                                  }
+                                  return null;
+                                }),
+                            const SizedBox(height: 15.0),
+                            TextFormField(
+                                decoration: const InputDecoration(
+                                    border: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            width: 2, color: Colors.black)),
+                                    label: Text("Task Date",
+                                        style: TextStyle(color: Colors.black)),
+                                    prefixIcon: Icon(
+                                        Icons.calendar_month_outlined,
+                                        color: Colors.black)),
+                                controller: dateController,
+                                keyboardType: TextInputType.datetime,
+                                onTap: () {
+                                  showDatePicker(
+                                          context: context,
+                                          initialDate: DateTime.now(),
+                                          firstDate: DateTime.now(),
+                                          lastDate:
+                                              DateTime.parse("2030-12-30"))
+                                      .then((value) {
+                                    dateController.text =
+                                        DateFormat.yMMMd().format(value!);
+                                  });
+                                },
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return "date must not be empty";
+                                  }
+                                  return null;
+                                })
+                          ]))),
+                  elevation: 20.0,
+                )
+                .closed
+                .then((value) {
+              isBottomSheetShown = false;
+              setState(() {
+                fabIcon = Icons.edit;
+              });
+            });
             isBottomSheetShown = true;
             setState(() {
               fabIcon = Icons.add;

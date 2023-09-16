@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list_app/layout/home_layout.dart';
 import 'package:bloc/bloc.dart';
-import 'constatnt/bloc_observer/bloc_observer.dart';
+import 'package:todo_list_app/shared/bloc_observer/bloc_observer.dart';
 import 'modules/counter_screen/counter.dart';
 
 void main() {
@@ -19,8 +19,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'TODO App',
       theme: ThemeData.dark().copyWith(),
-      home: SafeArea(
-        child: CounterScreen(),
+      home:  SafeArea(
+        child: HomeLayout(),
       ),
     );
   }

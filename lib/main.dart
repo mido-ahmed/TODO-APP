@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list_app/layout/home_layout.dart';
+import 'package:bloc/bloc.dart';
+import 'constatnt/bloc_observer/bloc_observer.dart';
+import 'modules/counter_screen/counter.dart';
 
 void main() {
+  Bloc.observer = MyBlocObserver();
   runApp(const MyApp());
 }
 
@@ -14,12 +18,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'TODO App',
-      theme: ThemeData.dark().copyWith(
-          // primaryColor: const Color(0xFF3D4149),
-          // scaffoldBackgroundColor: const Color(0xFF3D4149),
-          ),
-      home: const SafeArea(
-        child: HomeLayout(),
+      theme: ThemeData.dark().copyWith(),
+      home: SafeArea(
+        child: CounterScreen(),
       ),
     );
   }

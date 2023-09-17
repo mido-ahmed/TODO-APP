@@ -44,6 +44,7 @@ class _BuildTaskItemState extends State<BuildTaskItem> {
               ),
               const SizedBox(width: 10),
               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Text(

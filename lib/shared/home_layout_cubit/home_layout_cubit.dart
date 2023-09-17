@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_list_app/modules/done_tasks/app-done-tasks.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../../modules/archived_tasks/app-archieved-tasks.dart';
 import '../../modules/new_tasks/app-new-tasks.dart';
@@ -12,18 +13,85 @@ class AppCubit extends Cubit<AppStates> {
   AppCubit() : super(AppInitialState());
 
   static AppCubit get(context) => BlocProvider.of(context);
-
+  Database? database;
   int currentIndex = 0;
-
+  IconData fabIcon = Icons.edit;
+  List<Map<String, Object?>> tasks = [];
   List<Widget> screens = const [
     NewTaskScreen(),
     DoneTaskScreen(),
     ArchieveTaskScreen()
   ];
   List<String> appBarNames = ["New Task", "Done Task", "Archive Task"];
+  bool isBottomSheetShown = false;
 
   void changeIndex(int index) {
     currentIndex = index;
     emit(AppChangeBottomNavBarState());
+  }
+
+  void createDataBase() {
+    openDatabase(
+      'todo.db',
+      version: 1,
+      onCreate: (database, version) async {
+        print("database created");
+        database
+            .execute(
+                'CREATE TABLE tasks(id INTEGER primary key,title TEXT,date TEXT,time TEXT ,status TEXT);')
+            .then((value) {
+          print("table created");
+        }).catchError((error) {
+          print("Error when creating table ${error.toString()}");
+        });
+      },
+      onOpen: (database) {
+        getFromDataBase(database).then((value) {
+          tasks = value!;
+          print(tasks);
+          emit(AppGetDataBaseState());
+        });
+        print("database opened");
+      },
+    ).then((value) {
+      database = value;
+      emit(AppCreateDataBaseState());
+    });
+  }
+
+  insertToDataBase(
+    @required String title,
+    @required String date,
+    @required String time,
+  ) async {
+    await database?.transaction((txn) async {
+      txn
+          .rawInsert(
+              'INSERT INTO tasks(title,date,time,status) VALUES ("$title","$date","$time","new")')
+          .then((value) {
+        print("$value inserted successfully");
+        emit(AppInsertDataBaseState());
+
+        getFromDataBase(database).then((value) {
+          tasks = value!;
+          print(tasks);
+          emit(AppGetDataBaseState());
+        });
+      }).catchError((error) {
+        print("Error when inserting new record ${error.toString()}");
+      });
+      return null;
+    });
+  }
+
+  Future<List<Map<String, Object?>>?> getFromDataBase(database) async {
+    emit(AppGetDataBaseLoadingState());
+    return await database?.rawQuery('SELECT * FROM tasks');
+  }
+
+  void changeBottomSheetState({required bool isShow, required IconData icon}) {
+    isBottomSheetShown = isShow;
+    fabIcon = icon;
+    emit(AppChangeBottomSheetState());
   }
 }

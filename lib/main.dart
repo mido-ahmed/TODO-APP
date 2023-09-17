@@ -18,7 +18,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'TODO App',
-      theme: ThemeData.dark().copyWith(),
       home:  SafeArea(
         child: HomeLayout(),
       ),

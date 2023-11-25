@@ -20,6 +20,7 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
         return ListView.separated(
             itemBuilder: (context, index) => BuildTaskItem(
                   model: AppCubit.get(context).tasks[index],
+                  context: context,
                 ),
             separatorBuilder: (context, index) => Container(
                 width: double.infinity, height: 1.0, color: Colors.grey),

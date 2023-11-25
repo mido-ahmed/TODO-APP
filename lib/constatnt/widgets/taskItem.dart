@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:todo_list_app/shared/home_layout_cubit/home_layout_cubit.dart';
 
 class BuildTaskItem extends StatefulWidget {
   final Map<String, Object?> model;
 
-  const BuildTaskItem({
-    super.key,
-    required this.model,
-  });
+  const BuildTaskItem({super.key, required this.model, context});
 
   @override
   State<BuildTaskItem> createState() => _BuildTaskItemState();
@@ -18,7 +16,7 @@ class _BuildTaskItemState extends State<BuildTaskItem> {
     return Padding(
       padding: const EdgeInsets.all(18.0),
       child: Container(
-          height: 70.0,
+          height: MediaQuery.sizeOf(context).height * 0.08800,
           width: double.infinity,
           decoration: const BoxDecoration(
             color: Colors.teal,
@@ -43,26 +41,56 @@ class _BuildTaskItemState extends State<BuildTaskItem> {
                 ),
               ),
               const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(
+                      '${widget.model['title']}',
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14),
+                    ),
+                    Text(
+                      '${widget.model['date']}',
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14),
+                    ),
+                  ],
+                ),
+              ),
+              Row(
                 children: [
-                  Text(
-                    '${widget.model['title']}',
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14),
+                  IconButton(
+                    onPressed: () {
+                      AppCubit.get(context).updateData(
+                        status: "done",
+                        id: widget.model['id'] as int,
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.check,
+                      color: Colors.white,
+                    ),
                   ),
-                  Text(
-                    '${widget.model['date']}',
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14),
+                  IconButton(
+                    onPressed: () {
+                      AppCubit.get(context).updateData(
+                        status: "archive",
+                        id: widget.model['id'] as int,
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.archive,
+                      color: Colors.white,
+                    ),
                   ),
                 ],
-              ),
+              )
             ],
           )),
     );

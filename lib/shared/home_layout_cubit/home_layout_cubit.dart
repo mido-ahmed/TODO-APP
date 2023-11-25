@@ -89,6 +89,20 @@ class AppCubit extends Cubit<AppStates> {
     return await database?.rawQuery('SELECT * FROM tasks');
   }
 
+  void updateData({
+    required String status,
+    required int id,
+  }) async {
+    database?.rawUpdate(
+      'UPDATE tasks SET status = ? WHERE id = ?',
+      ["$status", id],
+    ).then((value) {
+      emit(AppUpdateBottomSheetState());
+    }).catchError((error) {
+      print("Error when updating record ${error.toString()}");
+    });
+  }
+
   void changeBottomSheetState({required bool isShow, required IconData icon}) {
     isBottomSheetShown = isShow;
     fabIcon = icon;

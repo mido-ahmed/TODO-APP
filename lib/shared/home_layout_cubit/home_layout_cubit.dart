@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,7 +18,9 @@ class AppCubit extends Cubit<AppStates> {
   Database? database;
   int currentIndex = 0;
   IconData fabIcon = Icons.edit;
-  List<Map<String, Object?>> tasks = [];
+  List<Map<String, Object?>> newTasks = [];
+  List<Map<String, Object?>> doneTasks = [];
+  List<Map<String, Object?>> archiveTasks = [];
   List<Widget> screens = const [
     NewTaskScreen(),
     DoneTaskScreen(),
@@ -46,11 +50,7 @@ class AppCubit extends Cubit<AppStates> {
         });
       },
       onOpen: (database) {
-        getFromDataBase(database).then((value) {
-          tasks = value!;
-          print(tasks);
-          emit(AppGetDataBaseState());
-        });
+        getFromDataBase(database);
         print("database opened");
       },
     ).then((value) {
@@ -69,24 +69,33 @@ class AppCubit extends Cubit<AppStates> {
           .rawInsert(
               'INSERT INTO tasks(title,date,time,status) VALUES ("$title","$date","$time","new")')
           .then((value) {
-        print("$value inserted successfully");
+        log("$value inserted successfully");
         emit(AppInsertDataBaseState());
-
-        getFromDataBase(database).then((value) {
-          tasks = value!;
-          print(tasks);
-          emit(AppGetDataBaseState());
-        });
+        getFromDataBase(database);
       }).catchError((error) {
-        print("Error when inserting new record ${error.toString()}");
+        log("Error when inserting new record ${error.toString()}");
       });
       return null;
     });
   }
 
-  Future<List<Map<String, Object?>>?> getFromDataBase(database) async {
+  void getFromDataBase(database) {
+    newTasks = [];
+    doneTasks = [];
+    archiveTasks = [];
     emit(AppGetDataBaseLoadingState());
-    return await database?.rawQuery('SELECT * FROM tasks');
+    database.rawQuery('SELECT * FROM tasks').then((value) {
+      value.forEach((element) {
+        if (element["status"] == "new") {
+          newTasks.add(element);
+        } else if (element["status"] == "done") {
+          doneTasks.add(element);
+        } else if (element["status"] == "archive") {
+          archiveTasks.add(element);
+        }
+      });
+      emit(AppGetDataBaseState());
+    });
   }
 
   void updateData({
@@ -97,9 +106,24 @@ class AppCubit extends Cubit<AppStates> {
       'UPDATE tasks SET status = ? WHERE id = ?',
       ["$status", id],
     ).then((value) {
+      getFromDataBase(database);
       emit(AppUpdateBottomSheetState());
     }).catchError((error) {
-      print("Error when updating record ${error.toString()}");
+      log("Error when updating record ${error.toString()}");
+    });
+  }
+
+  void deleteData({
+    required int id,
+  }) async {
+    database?.rawDelete(
+      'DELETE FROM tasks WHERE id = ?',
+      [id],
+    ).then((value) {
+      getFromDataBase(database);
+      emit(AppDeleteDataBaseState());
+    }).catchError((error) {
+      log("Error when deleting record ${error.toString()}");
     });
   }
 
